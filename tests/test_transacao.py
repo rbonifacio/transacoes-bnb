@@ -39,6 +39,7 @@ def test_transacao_guarda_o_saldo_anterior() -> None:
 
     transacao = cliente.registra_transacao(100.0, TipoTransacao.CREDITO)
 
+    assert transacao is not None
     assert transacao.saldo_anterior == 300.0
     assert cliente.saldo == 400.0
 
@@ -48,6 +49,7 @@ def test_transacao_registra_valor_e_tipo() -> None:
 
     transacao = cliente.registra_transacao(25.5, TipoTransacao.CREDITO)
 
+    assert transacao is not None
     assert transacao.valor == 25.5
     assert transacao.tipo == TipoTransacao.CREDITO
     assert cliente.saldo == 35.5
@@ -58,6 +60,7 @@ def test_transacao_referencia_o_cliente() -> None:
 
     transacao = cliente.registra_transacao(20.0, TipoTransacao.DEBITO)
 
+    assert transacao is not None
     assert transacao.id_cliente == "CUST013"
     assert cliente.saldo == 480.0
 
@@ -67,6 +70,7 @@ def test_transacao_eh_adicionada_ao_historico() -> None:
 
     transacao = cliente.registra_transacao(40.0, TipoTransacao.DEBITO)
 
+    assert transacao is not None
     assert cliente.transacoes == [transacao]
     assert cliente.saldo == 50.0
 
@@ -77,6 +81,8 @@ def test_historico_preserva_a_ordem_das_transacoes() -> None:
     primeira = cliente.registra_transacao(50.0, TipoTransacao.CREDITO)
     segunda = cliente.registra_transacao(30.0, TipoTransacao.DEBITO)
 
+    assert primeira is not None
+    assert segunda is not None
     assert cliente.transacoes == [primeira, segunda]
     assert cliente.saldo == 120.0
 
@@ -97,6 +103,7 @@ def test_saldo_anterior_da_segunda_transacao_eh_o_saldo_apos_a_primeira() -> Non
     cliente.registra_transacao(40.0, TipoTransacao.CREDITO)
     segunda = cliente.registra_transacao(60.0, TipoTransacao.DEBITO)
 
+    assert segunda is not None
     assert segunda.saldo_anterior == 140.0
     assert cliente.saldo == 80.0
 
@@ -119,6 +126,7 @@ def test_transacao_usa_a_data_informada() -> None:
 
     transacao = cliente.registra_transacao(10.0, TipoTransacao.CREDITO, data)
 
+    assert transacao is not None
     assert transacao.data == data
     assert cliente.saldo == 110.0
 
@@ -132,6 +140,7 @@ def test_transacao_sem_data_usa_o_momento_atual() -> None:
     transacao = cliente.registra_transacao(10.0, TipoTransacao.CREDITO)
     depois = datetime.now()
 
+    assert transacao is not None
     assert antes <= transacao.data <= depois
     assert cliente.saldo == 110.0
 
@@ -142,6 +151,8 @@ def test_cada_transacao_recebe_um_identificador_unico() -> None:
     primeira = cliente.registra_transacao(10.0, TipoTransacao.CREDITO)
     segunda = cliente.registra_transacao(10.0, TipoTransacao.CREDITO)
 
+    assert primeira is not None
+    assert segunda is not None
     assert primeira.id_transacao.startswith("TX-")
     assert segunda.id_transacao.startswith("TX-")
     assert primeira.id_transacao != segunda.id_transacao
@@ -162,9 +173,12 @@ def test_transacoes_de_clientes_diferentes_sao_independentes() -> None:
     assert cliente_b.saldo == 100.0
     assert cliente_b.transacoes == []
 
-# def test_debito_saldo_insuficiente() -> None:
-#     cliente = Cliente("CUST005", "Bruno", "Lima", 30, "Analyst", saldo_inicial=100.0)
 
-#     cliente.registra_transacao(150.0, TipoTransacao.DEBITO)
+def test_debito_com_saldo_insuficiente_nao_altera_o_saldo() -> None:
+    cliente = Cliente("CUST024", "Bruno", "Lima", 30, "Analyst", saldo_inicial=100.0)
 
-#     assert cliente.saldo == 30.0
+    transacao = cliente.registra_transacao(150.0, TipoTransacao.DEBITO)
+
+    assert transacao is None
+    assert cliente.saldo == 100.0
+    assert cliente.transacoes == []
