@@ -55,7 +55,7 @@ class Cliente:
         valor: float,
         tipo: TipoTransacao,
         data: datetime | None = None,
-    ) -> Transacao:
+    ) -> Transacao | None:
 
         transacao = Transacao(
             id_cliente=self.id_cliente,
@@ -69,7 +69,10 @@ class Cliente:
             case TipoTransacao.CREDITO:
                 self.saldo += valor
             case TipoTransacao.DEBITO:
-                self.saldo -= valor
+                if valor <= self.saldo:
+                    self.saldo -= valor
+                else:
+                    return None
 
         self.transacoes.append(transacao)
 
