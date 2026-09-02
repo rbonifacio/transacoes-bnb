@@ -1,0 +1,24 @@
+# Bytecode e artefatos de build
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Caches das ferramentas de qualidade
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editores e sistema operacional
+.idea/
+.vscode/
+.DS_Store
